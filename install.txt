@@ -1,0 +1,6 @@
+﻿HSPI_TwilioMessaging.exe,.,0
+HSPI_TwilioMessaging.exe.config,.,0
+Newtonsoft.Json.dll,.\bin\TwilioMessaging,0
+Newtonsoft.Json.xml,.\bin\TwilioMessaging,0
+Twilio.dll,.\bin\TwilioMessaging,0
+Twilio.xml,.\bin\TwilioMessaging,0
