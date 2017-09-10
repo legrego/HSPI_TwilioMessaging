@@ -3,6 +3,7 @@ using NullGuard;
 using Scheduler;
 using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Text;
 using System.Web;
 
@@ -129,7 +130,7 @@ namespace Hspi
             var tabs = new clsJQuery.jqTabs("tab1id", PageName);
             var tab1 = new clsJQuery.Tab();
             tab1.tabTitle = "Twilio Settings";
-            tab1.tabDIVID = $"tabs{i++}";
+            tab1.tabDIVID = String.Format(CultureInfo.InvariantCulture, "tabs{0}", i++);
             tab1.tabContent = BuildSettingTab();
             tabs.tabs.Add(tab1);
 
@@ -139,7 +140,7 @@ namespace Hspi
             return stb.ToString();
         }
 
-        private string BuildSettingTab()
+		private string BuildSettingTab()
         {
             StringBuilder stb = new StringBuilder();
             stb.Append(PageBuilderAndMenu.clsPageBuilder.FormStart("ftmSettings", "IdSettings", "Post"));

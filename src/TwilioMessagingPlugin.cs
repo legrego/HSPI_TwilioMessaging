@@ -3,6 +3,7 @@ using NullGuard;
 using Scheduler;
 using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Threading;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -163,14 +164,15 @@ namespace Hspi
                 && config.Message.Length > 0;
         }
 
-        public override IPlugInAPI.strMultiReturn ActionProcessPostUI([AllowNull] NameValueCollection postData, IPlugInAPI.strTrigActInfo actionInfo)
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
+		public override IPlugInAPI.strMultiReturn ActionProcessPostUI([AllowNull] NameValueCollection postData, IPlugInAPI.strTrigActInfo actionInfo)
         {
             LogDebug("Handling ActionProcessPostUI");
             var value = new IPlugInAPI.strMultiReturn();
             value.TrigActInfo = actionInfo;
 
             var config = new SendMessageActionConfig();
-            if (postData != null)
+            if (postData != null && postData.HasKeys())
             {
                 foreach(var key in postData.Keys)
                 {
@@ -265,7 +267,7 @@ namespace Hspi
             }
             if (config.ToNumber == null || config.ToNumber.Length == 0)
             {
-                LogWarning("No to number configured! Message won't send");
+                LogWarning("No 'To' number configured! Message won't send");
                 return;
             } else
             {

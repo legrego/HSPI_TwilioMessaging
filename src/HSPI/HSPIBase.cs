@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Threading;
 
 namespace Hspi
@@ -83,7 +84,10 @@ namespace Hspi
             }
             catch (Exception ex)
             {
-                throw new HspiConnectionException($"Error connecting homeseer SCS client: {ex.GetFullMessage()}", ex);
+                throw new HspiConnectionException(
+					String.Format(CultureInfo.InvariantCulture, "Error connecting homeseer SCS client: {0}", ex.GetFullMessage()), 
+					ex
+				);
             }
 
             try
@@ -96,7 +100,10 @@ namespace Hspi
             }
             catch (Exception ex)
             {
-                throw new HspiConnectionException($"Error connecting callback SCS client: {ex.GetFullMessage()}", ex);
+                throw new HspiConnectionException(
+					String.Format(CultureInfo.InvariantCulture, "Error connecting callback SCS client: {0}", ex.GetFullMessage()), 
+					ex
+				);
             }
 
             // Establish the reverse connection from homeseer back to our plugin
@@ -106,7 +113,10 @@ namespace Hspi
             }
             catch (Exception ex)
             {
-                throw new HspiConnectionException($"Error connecting homeseer to our plugin: {ex.GetFullMessage()}", ex);
+                throw new HspiConnectionException(
+					String.Format(CultureInfo.InvariantCulture, "Error connecting homeseer to our plugin: {0}", ex.GetFullMessage()), 
+					ex
+				);
             }
 
             HsClient.Disconnected += HsClient_Disconnected;
@@ -272,12 +282,12 @@ namespace Hspi
 
         public virtual void LogDebug(string message)
         {
-            HS.WriteLog(Name, $"Debug:{message}");
+            HS.WriteLog(Name, String.Format(CultureInfo.InvariantCulture, "Debug:{0}", message));
         }
 
         protected void LogError(string message)
         {
-            HS.WriteLogEx(Name, $"Error:{message}", "#FF0000");
+            HS.WriteLogEx(Name, String.Format(CultureInfo.InvariantCulture, "Error:{0}", message), "#FF0000");
         }
 
         protected void LogInfo(string message)
@@ -287,7 +297,7 @@ namespace Hspi
 
         protected void LogWarning(string message)
         {
-            HS.WriteLogEx(Name, $"Warning:{message}", "#D58000");
+            HS.WriteLogEx(Name, String.Format(CultureInfo.InvariantCulture, "Warning:{0}", message), "#D58000");
         }
 
         private readonly int accessLevel;

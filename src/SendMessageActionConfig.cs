@@ -21,9 +21,12 @@ namespace Hspi
 
         public string Message { get; set; }
 
-        public static byte[] SerializeActionConfig(SendMessageActionConfig cfg)
+		public static byte[] SerializeActionConfig(SendMessageActionConfig cfg)
         {
-            if (cfg == null) throw new HspiException("configuration parameter is required");
+			if(cfg == null)
+			{
+				throw new HspiException("configuration parameter is required");
+			}
 
             string toNumber = cfg.ToNumber;
             string message = cfg.Message;
@@ -43,13 +46,13 @@ namespace Hspi
             }
             finally
             {
-               if (ms != null)
+				if(bw != null)
+				{
+					bw.Dispose();
+				}
+				if (ms != null)
                 {
                     ms.Dispose();
-                }
-               if (bw != null)
-                {
-                    bw.Dispose();
                 }
             }
             
