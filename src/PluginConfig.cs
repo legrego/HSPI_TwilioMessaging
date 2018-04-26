@@ -20,14 +20,18 @@ namespace Hspi
         /// Initializes a new instance of the <see cref="PluginConfig"/> class.
         /// </summary>
         /// <param name="HS">The homeseer application.</param>
-        public PluginConfig(IHSApplication HS)
+        public PluginConfig(IHSApplication HS, bool offline = false)
         {
             this.HS = HS;
 
-            authToken = GetValue(AuthTokenKey, string.Empty);
-            debugLogging = GetValue(DebugLoggingKey, false);
-            accountSID = GetValue<string>(AccountSIDKey, string.Empty);
-            fromNumber = GetValue<string>(FromNumberKey, string.Empty);
+			this.offline = offline;
+			if(!this.offline)
+			{
+				authToken = GetValue(AuthTokenKey, string.Empty);
+				debugLogging = GetValue(DebugLoggingKey, false);
+				accountSID = GetValue<string>(AccountSIDKey, string.Empty);
+				fromNumber = GetValue<string>(FromNumberKey, string.Empty);
+			}
         }
 
         /// <summary>
@@ -169,11 +173,13 @@ namespace Hspi
 
         private T GetValue<T>(string key, T defaultValue)
         {
+			if(this.offline) return defaultValue;
             return GetValue(key, defaultValue, DefaultSection);
         }
 
         private T GetValue<T>(string key, T defaultValue, string section)
         {
+			if(this.offline) return defaultValue;
             string stringValue = HS.GetINISetting(section, key, null, FileName);
 
             if (stringValue != null)
@@ -201,7 +207,10 @@ namespace Hspi
             if (!value.Equals(oldValue))
             {
                 string stringValue = System.Convert.ToString(value, CultureInfo.InvariantCulture);
-                HS.SaveINISetting(section, key, stringValue, FileName);
+				if(!this.offline)
+				{
+					HS.SaveINISetting(section, key, stringValue, FileName);
+				}
                 oldValue = value;
             }
         }
@@ -253,6 +262,7 @@ namespace Hspi
         private string authToken;
         private string fromNumber;
         private bool disposedValue = false;
+		private bool offline;
         private readonly ReaderWriterLockSlim configLock = new ReaderWriterLockSlim();
     };
 }

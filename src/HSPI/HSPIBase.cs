@@ -37,6 +37,7 @@ namespace Hspi
             this.hsComPort = hsComPort;
             this.supportConfigDevice = supportConfigDevice;
             this.supportConfigDeviceAll = supportConfigDeviceAll;
+			this.Log = new Logger(this.name);
         }
 
         public override bool HasTriggers => false;
@@ -81,6 +82,7 @@ namespace Hspi
 
                 hsTraceListener = new HSTraceListener(this as IDebugLogger);
                 Debug.Listeners.Add(hsTraceListener);
+				this.Log.HS = HS;
             }
             catch (Exception ex)
             {
@@ -282,22 +284,22 @@ namespace Hspi
 
         public virtual void LogDebug(string message)
         {
-            HS.WriteLog(Name, String.Format(CultureInfo.InvariantCulture, "Debug:{0}", message));
+			this.Log.LogDebug(message);
         }
 
         protected void LogError(string message)
         {
-            HS.WriteLogEx(Name, String.Format(CultureInfo.InvariantCulture, "Error:{0}", message), "#FF0000");
+			this.Log.LogError(message);
         }
 
         protected void LogInfo(string message)
         {
-            HS.WriteLog(Name, message);
+			this.Log.LogInfo(message);
         }
 
         protected void LogWarning(string message)
         {
-            HS.WriteLogEx(Name, String.Format(CultureInfo.InvariantCulture, "Warning:{0}", message), "#D58000");
+			this.Log.LogWarning(message);
         }
 
         private readonly int accessLevel;
@@ -313,5 +315,6 @@ namespace Hspi
         private readonly bool supportsMultipleInstancesSingleEXE;
         private bool disposedValue = false;
         private HSTraceListener hsTraceListener;
+		private Logger Log;
     }
 }

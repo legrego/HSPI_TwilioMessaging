@@ -1,0 +1,7 @@
+<div id="id_TwilioSendTestDialog" style="display:none">
+	<p>Enter a phone number to send a test message. This phone must be capable of receiving SMS Messages</p>
+    <label for="id_testNumber">Phone Number</label>
+    <input id="id_testNumber" type="text" />
+
+    <button id="id_sendTestButton">Send a test message</button>
+</div>

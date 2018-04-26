@@ -1,0 +1,36 @@
+<script>
+const settingsForm = $('#ftmSettings');
+
+$('#id_sendTestButton')
+	.button()
+	.click(function(e){
+		// Reverse engineered from HS3 code
+		const testNumber = encodeURIComponent($('#id_testNumber').val());
+		if (!testNumber || testNumber.trim().length === 0) {
+			alert('Please enter a test number');
+			return;
+		}
+
+		var data = `&id=${this.id}&testNumber=${testNumber}&${settingsForm.serialize()}`;
+		commonAjaxPost(data, 'Twilio_Messaging_Configuration');
+		$('#id_TwilioSendTestDialog').dialog('close');
+		return false;
+	});
+
+$('#id_Send_test_message')
+    .click(function () {
+		// sanity check values
+		let anyInvalid = false;
+		$('input', settingsForm).each((idx, input) => {
+			if (!$(input).val()) {
+				anyInvalid = true;
+			}
+		});		
+
+		if (anyInvalid) {
+			alert('Please fill out all fields before testing');
+		} else {
+			$('#id_TwilioSendTestDialog').dialog({title: 'Test Twilio Configuration', width: '450px'});
+		}
+    });
+</script>

@@ -3,7 +3,6 @@ using NullGuard;
 using Scheduler;
 using System;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.Threading;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -40,6 +39,8 @@ namespace Hspi
                 pluginConfig.ConfigChanged += PluginConfig_ConfigChanged;
 
                 RegisterConfigPage();
+
+				twilioService = new TwilioServiceFacade(HS, pluginConfig.DebugLogging);
 
                 LogDebug("Plugin Started");
             }
@@ -241,51 +242,20 @@ namespace Hspi
                 message = "";
             }
 
-            var toField = new Scheduler.clsJQuery.jqTextBox("ToNumber" + idSuffix, "text", toNumber, "events", 20, false);
+            var toField = new Scheduler.clsJQuery.jqTextBox("ToNumber" + idSuffix, "", toNumber, "Events", 20, false);
             toField.label = "<strong>To</strong>";
 
-            var messageField = new Scheduler.clsJQuery.jqTextBox("Message" + idSuffix, "text", message, "events", 100, false);
+            var messageField = new Scheduler.clsJQuery.jqTextBox("Message" + idSuffix, "", message, "Events", 100, false);
             messageField.label = "<strong>Message</strong>";
 
-            var saveBtn = new Scheduler.clsJQuery.jqButton("submit" + idSuffix, "Save", "events", true);
+			var saveBtn = new Scheduler.clsJQuery.jqButton("submit" + idSuffix, "Save", "Events", true);
 
-            return toField.Build() + "<br>" + messageField.Build() + "<br>" + saveBtn.Build();
+			return toField.Build() + "<br>" + messageField.Build() + "<br>" + saveBtn.Build();
         }
 
-        private void SendMessageToTwilio(SendMessageActionConfig config)
+        public void SendMessageToTwilio(SendMessageActionConfig config)
         {
-            LogDebug("Starting SendMessageToTwilio");
-
-            PhoneNumber to;
-            PhoneNumber from = new PhoneNumber(pluginConfig.FromNumber);
-            string message = config.Message;
-
-            if (message == null || message.Length == 0)
-            {
-                LogWarning("No message configured! Message won't send");
-                return;
-            }
-            if (config.ToNumber == null || config.ToNumber.Length == 0)
-            {
-                LogWarning("No 'To' number configured! Message won't send");
-                return;
-            } else
-            {
-                to = new PhoneNumber(HS.ReplaceVariables(config.ToNumber));
-            }
-
-            message = HS.ReplaceVariables(message);
-
-
-            TwilioClient.Init(pluginConfig.AccountSID, pluginConfig.AuthToken);
-
-            var publishedMessage = MessageResource.Create(
-                to: to,
-                from: from,
-                body: message
-            );
-
-            LogInfo("Published message with Sid: " + publishedMessage.Sid);
+			this.twilioService.SendMessageToTwilio(this.pluginConfig, config);
         }
 
         private void RegisterConfigPage()
@@ -336,6 +306,7 @@ namespace Hspi
         private CancellationTokenSource cancellationTokenSourceForUpdateDevice = new CancellationTokenSource();
         private ConfigPage configPage;
         private PluginConfig pluginConfig;
+		private TwilioServiceFacade twilioService;
         private const int ActionSendMessageTANumber = 1;
         private bool disposedValue = false;
     }
