@@ -185,8 +185,8 @@
     <Error Condition="!Exists('packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.2.1.0\build\netstandard1.0\Fody.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>cd $(TargetDir)
-powershell.exe -nologo -noprofile -command "&amp; { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('HSPI_TwilioMessaging.zip', '$(TargetDir)'); }"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <Import Project="packages\Fody.2.1.0\build\netstandard1.0\Fody.targets" Condition="Exists('packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
