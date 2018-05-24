@@ -1,0 +1,4 @@
+﻿language: csharp
+solution: HSPI_TwilioMessaging.sln
+mono:
+    - latest

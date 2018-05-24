@@ -134,6 +134,8 @@
     <Compile Include="src\TwilioServiceFacade.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".travis.yml" />
+    <None Include="README.md" />
     <None Include="src\App.config" />
     <None Include="HSPI_TwilioMessaging.ruleset">
       <SubType>Designer</SubType>
