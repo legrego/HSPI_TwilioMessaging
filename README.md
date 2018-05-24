@@ -1,17 +1,14 @@
 Homeseer Twilio Messenger PlugIn
-=====================================
-HomeSeer plugin to send SMS Messages via Twilio from HomeSeer.
+[![Build Status](https://travis-ci.org/legrego/HSPI_TwilioMessaging.svg?branch=master)](https://travis-ci.org/legrego/HSPI_TwilioMessaging)
+====
+HomeSeer plugin to send SMS Messages via Twilio.
 
-Overview
---------
-The plugin in written in C# and is based on a sample from http://board.homeseer.com/showthread.php?t=178122.
+## Features
+* Send SMS Text Messages using Twilio's API (account required)
+* Send messages as part of your event handling
 
-Compatibility
-------------
-Tested on the following platforms:
-* Windows 10 
-* HomeSeer HomeTroller S6 (Ubuntu)
+## Compatibility
+* HomeSeer 3 (Linux and Windows are both supported)
 
-Installation
------------
-TODO
+## Support
+Please open a GitHub issue for any questions, bugs, or feature requests.
