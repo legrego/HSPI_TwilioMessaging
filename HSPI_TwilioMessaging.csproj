@@ -87,9 +87,8 @@
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="NullGuard, Version=1.5.2.0, Culture=neutral, PublicKeyToken=1958ac8092168428, processorArchitecture=MSIL">
-      <HintPath>packages\NullGuard.Fody.1.5.2\lib\dotnet\NullGuard.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="NullGuard, Version=1.8.0.0, Culture=neutral, PublicKeyToken=1ca091877d12ca03, processorArchitecture=MSIL">
+      <HintPath>packages\NullGuard.Fody.1.8.0\lib\net452\NullGuard.dll</HintPath>
     </Reference>
     <Reference Include="Scheduler, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
       <HintPath>packages\Homeseer.1.0.0\lib\net45\Scheduler.dll</HintPath>
@@ -101,11 +100,12 @@
     <Reference Include="System.IdentityModel.Tokens.Jwt, Version=5.1.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>packages\System.IdentityModel.Tokens.Jwt.5.1.2\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
+    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
-    <Reference Include="Twilio, Version=5.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Twilio.5.5.2\lib\net451\Twilio.dll</HintPath>
+    <Reference Include="Twilio, Version=5.13.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Twilio.5.13.1\lib\net451\Twilio.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".travis.yml" />
+    <None Include="packages.config" />
     <None Include="README.md" />
     <None Include="src\App.config" />
     <None Include="HSPI_TwilioMessaging.ruleset">
@@ -155,9 +156,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FodyWeavers.xml" />
-  </ItemGroup>
-  <ItemGroup>
+    <Content Include="FodyWeavers.xml" />
     <Content Include="install.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -177,17 +176,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="packages\Fody.2.1.0\build\netstandard1.0\Fody.targets" Condition="Exists('packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('packages\Fody.2.1.0\build\netstandard1.0\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.2.1.0\build\netstandard1.0\Fody.targets'))" />
+    <Error Condition="!Exists('packages\Fody.3.0.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Fody.3.0.0\build\Fody.targets'))" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>cd $(TargetDir)
 powershell.exe -nologo -noprofile -command "&amp; { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('HSPI_TwilioMessaging.zip', '$(TargetDir)'); }"</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="packages\Fody.3.0.0\build\Fody.targets" Condition="Exists('packages\Fody.3.0.0\build\Fody.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
