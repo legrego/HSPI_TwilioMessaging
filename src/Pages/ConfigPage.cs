@@ -83,19 +83,19 @@ namespace Hspi
 
 			if(form == "id_sendTestButton")
 			{
-				PluginConfig testConfig = new PluginConfig(HS, offline: true);
-				PopulatePluginConfig(testConfig, parts);
-
-				string toNumber = parts["testNumber"];
-
-				TwilioServiceFacade twilioService = new TwilioServiceFacade(HS, testConfig.DebugLogging);
-
-				SendMessageActionConfig messageConfig = new SendMessageActionConfig();
-				messageConfig.ToNumber = toNumber;
-				messageConfig.Message = @"$time: this is a test message from the HomeSeer Twilio Plugin.";
-
-				using(testConfig)
+				PluginConfig testConfig;
+				using(testConfig = new PluginConfig(HS, offline: true))
 				{
+					PopulatePluginConfig(testConfig, parts);
+
+					string toNumber = parts["testNumber"];
+
+					TwilioServiceFacade twilioService = new TwilioServiceFacade(HS, testConfig.DebugLogging);
+
+					SendMessageActionConfig messageConfig = new SendMessageActionConfig();
+					messageConfig.ToNumber = toNumber;
+					messageConfig.Message = @"$time: this is a test message from the HomeSeer Twilio Plugin.";
+
 					try
 					{
 						twilioService.SendMessageToTwilio(testConfig, messageConfig);
@@ -111,10 +111,6 @@ namespace Hspi
 						}
 						this.divToUpdate.Add(SuccessDivId, string.Empty);
 						this.divToUpdate.Add(ErrorDivId, errorMessage);
-					}
-					finally
-					{
-						testConfig.Dispose();
 					}
 				}
 			}
