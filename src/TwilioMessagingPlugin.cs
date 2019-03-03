@@ -103,8 +103,26 @@ namespace Hspi
                         return null;
 
                     case "SendMessage":
-                        LogWarning("SendMessage not yet implemented");
-                        break;
+                        LogInfo("Sending message via 'SendMessage' plugin function");
+
+                        if (parameters == null || parameters.Length != 2)
+                        {
+                            string count = parameters == null ? "none" : parameters.Length.ToString();
+                            LogError("SendMessage: expected 2 parameters, but found " + count);
+                            return null;
+                        }
+
+                        string toNumber = parameters[0] as string;
+                        string message = parameters[1] as string;
+
+                        SendMessageActionConfig config = new SendMessageActionConfig()
+                        {
+                            ToNumber = toNumber,
+                            Message = message,
+                        };
+
+                        SendMessageToTwilio(config);
+                        return null;
                 }
                 return null;
             }
