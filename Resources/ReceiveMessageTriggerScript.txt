@@ -1,0 +1,17 @@
+﻿var originallyChecked__uniqueControlId___ = $('#cb_id_AnyNumber__uniqueControlId__').attr('checked') === 'checked';
+toggleFromInput__uniqueControlId___(originallyChecked__uniqueControlId___);
+
+$('#cb_id_AnyNumber__uniqueControlId__').on('change', function onChange(event) {
+    var isChecked = event.target.checked;
+    toggleFromInput__uniqueControlId___(isChecked);
+    
+});
+
+function toggleFromInput__uniqueControlId___(allowAnyNumber) {
+  if (allowAnyNumber) {
+    $('#FromNumberWrap__uniqueControlId__').hide();
+    $('#id_FromNumber__uniqueControlId__').val('');
+  } else {
+    $('#FromNumberWrap__uniqueControlId__').show();
+  }
+}

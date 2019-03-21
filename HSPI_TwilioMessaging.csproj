@@ -133,6 +133,11 @@
     <Compile Include="src\IPlugInAPI2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\TwilioServiceFacade.cs" />
+    <Compile Include="src\ReceiveMessageTriggerConfig.cs" />
+    <Compile Include="src\Pages\PageHelper.cs" />
+    <Compile Include="src\Pages\TriggerPage.cs" />
+    <Compile Include="src\Utils\Extensions.cs" />
+    <Compile Include="src\Utils\TaskHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".travis.yml" />
@@ -143,6 +148,7 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="src\packages.config" />
+    <None Include="Resources\ReceiveMessageTriggerScript.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -175,6 +181,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\Utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
