@@ -3,6 +3,9 @@
 ###############################################################################
 * text=auto
 
+# Never modify line endings for installer script
+install.txt text eol=crlf
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #

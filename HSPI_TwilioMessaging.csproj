@@ -149,6 +149,7 @@
     </None>
     <None Include="src\packages.config" />
     <None Include="Resources\ReceiveMessageTriggerScript.txt" />
+    <None Include="create_installer.sh" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
