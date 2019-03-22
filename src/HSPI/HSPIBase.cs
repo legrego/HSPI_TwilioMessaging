@@ -302,6 +302,8 @@ namespace Hspi
 			this.Log.LogWarning(message);
         }
 
+        protected CancellationToken ShutdownCancellationToken => cancellationTokenSource.Token;
+
         private readonly int accessLevel;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private readonly int capabilities;

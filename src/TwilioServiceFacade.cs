@@ -1,5 +1,6 @@
 ﻿using HomeSeerAPI;
 using Twilio;
+using Twilio.Base;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 using System;
@@ -57,5 +58,31 @@ namespace Hspi
 
 			this.Log.LogInfo("Published message with Sid: " + publishedMessage.Sid);
 		}
-	}
+
+        public List<MessageResource> GetMessagesFromTwilio(PluginConfig pluginConfig, int secondsAgo)
+        {
+            this.Log.LogDebug("Starting GetMessagesFromTwilio");
+            TwilioClient.Init(pluginConfig.AccountSID, pluginConfig.AuthToken);
+
+            ReadMessageOptions options = new ReadMessageOptions
+            {
+                To = new PhoneNumber(pluginConfig.FromNumber),
+                DateSentAfter = DateTime.Now.AddSeconds(secondsAgo * -1)
+            };
+
+            ResourceSet<MessageResource> messages = MessageResource.Read(options);
+            if (this.Log.EnableDebug)
+            {
+                foreach (MessageResource message in messages)
+                {
+                    string from = message.From.ToString();
+                    string body = message.Body;
+                    string created = message.DateCreated.GetValueOrDefault(DateTime.MinValue).ToLongDateString();
+                    this.Log.LogDebug(string.Format("From: {0}, created: {1}, body: {2}", from, created, body));
+                }
+            }
+
+            return messages.Where((message) => message.DateCreated.GetValueOrDefault(DateTime.MinValue).CompareTo(options.DateSentAfter) >= 0).ToList();
+        }
+    }
 }

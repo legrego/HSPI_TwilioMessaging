@@ -4,9 +4,10 @@ using Scheduler;
 using System;
 using System.Collections.Specialized;
 using System.Threading;
+using Hspi.Pages;
+using Hspi.Utils;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
-using Twilio.Types;
 
 namespace Hspi
 {
@@ -20,7 +21,7 @@ namespace Hspi
         public TwilioMessagingPlugin()
             : base(TwilioMessagingData.PlugInName)
         {
-           
+
         }
 
         public override string InitIO(string port)
@@ -40,7 +41,9 @@ namespace Hspi
 
                 RegisterConfigPage();
 
-				twilioService = new TwilioServiceFacade(HS, pluginConfig.DebugLogging);
+                twilioService = new TwilioServiceFacade(HS, pluginConfig.DebugLogging);
+
+                ScheduleRefreshTrigger();
 
                 LogDebug("Plugin Started");
             }
@@ -73,6 +76,7 @@ namespace Hspi
 
         public override string GetPagePlugin(string page, [AllowNull]string user, int userRights, [AllowNull]string queryString)
         {
+
             if (page == ConfigPage.Name)
             {
                 return configPage.GetWebPage();
@@ -135,6 +139,70 @@ namespace Hspi
 
         #endregion "Script Override"
 
+        #region "Trigger Override"
+        public override bool HasTriggers => true;
+        public override int TriggerCount => 1;
+        protected override int GetTriggerCount()
+        {
+            return 1;
+        }
+
+        public override bool get_HasConditions(int triggerNumber) => false;
+
+        public override string get_TriggerName(int triggerNumber)
+        {
+            switch (triggerNumber)
+            {
+                case TriggerReceiveMessageTANumber:
+                    return $"Twilio: A text message is received from or containing...";
+
+                default:
+                    return base.get_TriggerName(triggerNumber);
+            }
+        }
+
+        public override string TriggerBuildUI([AllowNull]string uniqueControlId, IPlugInAPI.strTrigActInfo triggerInfo)
+        {
+            switch (triggerInfo.TANumber)
+            {
+                case TriggerReceiveMessageTANumber:
+                    System.Text.StringBuilder stb = new System.Text.StringBuilder();
+                    var page = new TriggerPage(HS, this.pluginConfig);
+                    return page.ReceiveMessageTriggerBuildUI(uniqueControlId, ReceiveMessageTriggerConfig.DeserializeTriggerConfig(triggerInfo.DataIn));
+
+                default:
+                    return base.ActionBuildUI(uniqueControlId, triggerInfo);
+            }
+        }
+
+        public override IPlugInAPI.strMultiReturn TriggerProcessPostUI([AllowNull] NameValueCollection postData, IPlugInAPI.strTrigActInfo actionInfo)
+        {
+            var value = new IPlugInAPI.strMultiReturn
+            {
+                TrigActInfo = actionInfo
+            };
+
+            if (postData != null && postData.HasKeys())
+            {
+                ReceiveMessageTriggerConfig config = new ReceiveMessageTriggerConfig(postData);
+                value.DataOut = ReceiveMessageTriggerConfig.SerializeTriggerConfig(config);
+            }
+            return value;
+        }
+
+        public override bool get_TriggerConfigured(IPlugInAPI.strTrigActInfo actionInfo)
+        {
+            ReceiveMessageTriggerConfig config = ReceiveMessageTriggerConfig.DeserializeTriggerConfig(actionInfo.DataIn);
+            return config.IsValid();
+        }
+
+        public override string TriggerFormatUI(IPlugInAPI.strTrigActInfo actionInfo)
+        {
+            ReceiveMessageTriggerConfig config = ReceiveMessageTriggerConfig.DeserializeTriggerConfig(actionInfo.DataIn);
+            return string.Format("Twilio: when an SMS message containing '{0}' from {1} is received", config.Message, config.FromDisplay);
+        }
+        #endregion
+
         #region "Action Override"
 
         public override int ActionCount()
@@ -183,8 +251,8 @@ namespace Hspi
                 && config.Message.Length > 0;
         }
 
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
-		public override IPlugInAPI.strMultiReturn ActionProcessPostUI([AllowNull] NameValueCollection postData, IPlugInAPI.strTrigActInfo actionInfo)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", MessageId = "0")]
+        public override IPlugInAPI.strMultiReturn ActionProcessPostUI([AllowNull] NameValueCollection postData, IPlugInAPI.strTrigActInfo actionInfo)
         {
             LogDebug("Handling ActionProcessPostUI");
             var value = new IPlugInAPI.strMultiReturn();
@@ -245,6 +313,28 @@ namespace Hspi
 
         #endregion "Action Override"
 
+        private string BuildTriggerBody(string idSuffix, ReceiveMessageTriggerConfig config)
+        {
+            string fromNumber = config.FromNumber;
+            if (fromNumber == null)
+            {
+                fromNumber = "";
+            }
+
+            string message = config.Message;
+            if (message == null)
+            {
+                message = "";
+            }
+
+            var messageField = new Scheduler.clsJQuery.jqTextBox("Message" + idSuffix, "text", message, "Events", 100, true)
+            {
+                id = NameToIdWithPrefix("Message" + idSuffix)
+            };
+
+            return messageField.Build();
+        }
+
         private string BuildActionBody(string idSuffix, SendMessageActionConfig config)
         {
             LogDebug("Building Action Body");
@@ -266,14 +356,23 @@ namespace Hspi
             var messageField = new Scheduler.clsJQuery.jqTextBox("Message" + idSuffix, "", message, "Events", 100, false);
             messageField.label = "<strong>Message</strong>";
 
-			var saveBtn = new Scheduler.clsJQuery.jqButton("submit" + idSuffix, "Save", "Events", true);
+            var saveBtn = new Scheduler.clsJQuery.jqButton("submit" + idSuffix, "Save", "Events", true);
 
-			return toField.Build() + "<br>" + messageField.Build() + "<br>" + saveBtn.Build();
+            return toField.Build() + "<br>" + messageField.Build() + "<br>" + saveBtn.Build();
+        }
+        protected static string NameToIdWithPrefix(string name)
+        {
+            return $"{ IdPrefix}{NameToId(name)}";
+        }
+
+        private static string NameToId(string name)
+        {
+            return name.Replace(' ', '_');
         }
 
         public void SendMessageToTwilio(SendMessageActionConfig config)
         {
-			this.twilioService.SendMessageToTwilio(this.pluginConfig, config);
+            this.twilioService.SendMessageToTwilio(this.pluginConfig, config);
         }
 
         private void RegisterConfigPage()
@@ -290,6 +389,63 @@ namespace Hspi
             };
             Callback.RegisterConfigLink(wpd);
             Callback.RegisterLink(wpd);
+        }
+
+        private void ScheduleRefreshTrigger(int dueTime = triggerRefreshFrequencyMillis)
+        {
+            intervalRefreshTimer?.Dispose();
+            intervalRefreshTimer = new Timer((x) => RefreshTriggers(), null,
+                                             dueTime,
+                                             Timeout.Infinite);
+        }
+
+        private void RefreshTriggers()
+        {
+            LogDebug("Refreshing Triggers");
+
+            var triggers = Callback.TriggerMatches(Name, TriggerReceiveMessageTANumber, -1);
+
+            if (triggers == null || triggers.Length == 0)
+            {
+                LogDebug("No triggers exist; aborting refresh");
+                return;
+            }
+
+            var messages = twilioService.GetMessagesFromTwilio(pluginConfig, triggerRefreshFrequencyMillis / 1000);
+
+            LogDebug(string.Format("Checking triggers against {0} messages", messages.Count));
+
+            foreach (var strTrigActInfo in triggers)
+            {
+                if (ShutdownCancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                var config = ReceiveMessageTriggerConfig.DeserializeTriggerConfig(strTrigActInfo.DataIn);
+                if (config.IsValid())
+                {
+                    string messageToLower = config.Message.ToLower();
+                    bool shouldFire = messages.Exists((MessageResource obj) =>
+                    {
+                        bool bodyMatches = obj.Body.ToLower().Contains(messageToLower);
+                        bool fromMatches = config.FromNumber.IsNullOrWhiteSpace() || config.FromNumber == obj.From.ToString();
+                        return fromMatches && bodyMatches;
+                    });
+
+                    if (shouldFire)
+                    {
+                        LogDebug("Firing trigger");
+                        Callback.TriggerFire(Name, strTrigActInfo);
+                    }
+                }
+                else
+                {
+                    LogDebug("Skipping trigger with invalid config");
+                }
+            }
+
+            ScheduleRefreshTrigger();
         }
 
         /// <summary>
@@ -323,9 +479,14 @@ namespace Hspi
 
         private CancellationTokenSource cancellationTokenSourceForUpdateDevice = new CancellationTokenSource();
         private ConfigPage configPage;
+
         private PluginConfig pluginConfig;
-		private TwilioServiceFacade twilioService;
+        private TwilioServiceFacade twilioService;
+        private Timer intervalRefreshTimer;
         private const int ActionSendMessageTANumber = 1;
+        private const int TriggerReceiveMessageTANumber = 1;
         private bool disposedValue = false;
+        private const string IdPrefix = "id_";
+        private const int triggerRefreshFrequencyMillis = 15000;
     }
 }
