@@ -2,7 +2,7 @@ Homeseer Twilio Messenger PlugIn
 [![Build Status](https://travis-ci.org/legrego/HSPI_TwilioMessaging.svg?branch=master)](https://travis-ci.org/legrego/HSPI_TwilioMessaging)
 ====
 HomeSeer plugin to send SMS Messages via Twilio.
-For more information, visit https://legrego.dev/homeseer_twilio_messenger
+Visit the [product page](https://legrego.dev/homeseer_twilio_messaging) for more information.
 
 ## Features
 * Trigger events when messages are received
