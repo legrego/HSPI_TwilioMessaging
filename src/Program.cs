@@ -9,7 +9,7 @@ namespace Hspi
         /// <summary>
         /// The homeseer server address.  Defaults to the local computer but can be changed through the command line argument, server=address.
         /// </summary>
-        private static string serverAddress = "192.168.10.20";
+        private static string serverAddress = "127.0.0.1";
 
         private const int serverPort = 10400;
 
@@ -23,11 +23,9 @@ namespace Hspi
             foreach (string sCmd in args)
             {
                 string[] parts = sCmd.Split('=');
-                switch (parts[0].ToUpperInvariant())
+                if (parts[0].ToUpperInvariant() == "SERVER")
                 {
-                    case "SERVER":
-                        serverAddress = parts[1];
-                        break;
+                    serverAddress = parts[1];
                 }
             }
 

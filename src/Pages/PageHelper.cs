@@ -12,7 +12,7 @@ namespace Hspi.Pages
     [NullGuard(ValidationFlags.Arguments | ValidationFlags.NonPublic)]
     internal abstract class PageHelper : PageBuilderAndMenu.clsPageBuilder
     {
-        public PageHelper(IHSApplication HS, PluginConfig pluginConfig, string pageName) : base(pageName)
+        protected PageHelper(IHSApplication HS, PluginConfig pluginConfig, string pageName) : base(pageName)
         {
             this.HS = HS;
             this.pluginConfig = pluginConfig;
@@ -31,7 +31,7 @@ namespace Hspi.Pages
                 toolTip = tooltip,
                 style = $"width: {width}px;",
                 enabled = true,
-                submitForm = autoPostBack,
+                submitForm = autoPostBack
             };
 
             if (options != null)
@@ -66,7 +66,7 @@ namespace Hspi.Pages
             var button = new clsJQuery.jqButton(name, label, PageName, autoPostBack)
             {
                 id = NameToIdWithPrefix(name),
-                toolTip = toolTip,
+                toolTip = toolTip
             };
             button.toolTip = toolTip;
             button.enabled = true;
@@ -81,7 +81,7 @@ namespace Hspi.Pages
             {
                 id = NameToIdWithPrefix(name),
                 @checked = @checked,
-                autoPostBack = autoPostBack,
+                autoPostBack = autoPostBack
             };
             return cb.Build();
         }
@@ -97,7 +97,7 @@ namespace Hspi.Pages
         {
             var b = new clsJQuery.jqButton(name, label, PageName, true)
             {
-                id = NameToIdWithPrefix(name),
+                id = NameToIdWithPrefix(name)
             };
 
             return b.Build();
@@ -120,7 +120,7 @@ namespace Hspi.Pages
             var b = new clsJQuery.jqTimeSpanPicker(name, label, PageName, submit)
             {
                 id = NameToIdWithPrefix(name),
-                defaultTimeSpan = timeSpan,
+                defaultTimeSpan = timeSpan
             };
 
             return b.Build();

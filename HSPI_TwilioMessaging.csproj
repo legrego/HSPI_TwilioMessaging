@@ -138,6 +138,10 @@
     <Compile Include="src\Utils\TaskHelper.cs" />
     <Compile Include="src\HSPI\IPlugInAPI2.cs" />
     <Compile Include="src\Exceptions\ExceptionHelper.cs" />
+    <Compile Include="src\PluginEventHandling.cs" />
+    <Compile Include="src\Pages\IEventPage.cs" />
+    <Compile Include="src\Pages\ActionPage.cs" />
+    <Compile Include="src\Pages\NoOpPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".travis.yml" />

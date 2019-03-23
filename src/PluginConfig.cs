@@ -261,8 +261,8 @@ namespace Hspi
         private bool debugLogging;
         private string authToken;
         private string fromNumber;
-        private bool disposedValue = false;
-		private bool offline;
+        private bool disposedValue;
+        private bool offline;
         private readonly ReaderWriterLockSlim configLock = new ReaderWriterLockSlim();
     };
 }

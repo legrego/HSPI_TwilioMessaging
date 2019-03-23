@@ -8,15 +8,27 @@ using Hspi.Utils;
 
 namespace Hspi.Pages
 {
-    internal class TriggerPage : PageHelper
+    internal class TriggerPage : PageHelper, IEventPage
     {
         public TriggerPage(IHSApplication HS, PluginConfig pluginConfig) : base(HS, pluginConfig, "Events")
         {
         }
 
-        public string ReceiveMessageTriggerBuildUI([AllowNull] string uniqueControlId,
-                                               ReceiveMessageTriggerConfig config)
+        public string Name()
         {
+            return "Twilio: when a message is received from or containing...";
+        }
+
+        public bool IsConfigured(IPlugInAPI.strTrigActInfo actionInfo)
+        {
+            var config = ReceiveMessageTriggerConfig.DeserializeTriggerConfig(actionInfo.DataIn);
+            return config.IsValid();
+        }
+
+        public string BuildEditUI([AllowNull] string uniqueControlId,
+                                               IPlugInAPI.strTrigActInfo actInfo)
+        {
+            var config = ReceiveMessageTriggerConfig.DeserializeTriggerConfig(actInfo.DataIn);
             StringBuilder stb = new StringBuilder();
 
             IncludeResourceScript(stb, "ReceiveMessageTriggerScript", uniqueControlId);
@@ -35,8 +47,14 @@ namespace Hspi.Pages
             return stb.ToString();
         }
 
+        public string BuildViewUI(IPlugInAPI.strTrigActInfo actInfo)
+        {
+            var config = ReceiveMessageTriggerConfig.DeserializeTriggerConfig(actInfo.DataIn);
+            return string.Format("A message from {0} containing the text '{1}' is received", config.FromDisplay, config.Message);
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public IPlugInAPI.strMultiReturn ReceiveMessageTriggerProcessPostUI([AllowNull] NameValueCollection postData,
+        public IPlugInAPI.strMultiReturn ProcessPostUI([AllowNull] NameValueCollection postData,
                                                                         IPlugInAPI.strTrigActInfo actionInfo)
         {
             IPlugInAPI.strMultiReturn result = new IPlugInAPI.strMultiReturn();
@@ -44,9 +62,8 @@ namespace Hspi.Pages
             result.TrigActInfo = actionInfo;
             result.sResult = string.Empty;
             if (postData != null && postData.Count > 0)
-            { 
-
-            ReceiveMessageTriggerConfig config = new ReceiveMessageTriggerConfig()
+            {
+                ReceiveMessageTriggerConfig config = new ReceiveMessageTriggerConfig
                 {
                     Message = postData[0]
                 };
@@ -55,6 +72,11 @@ namespace Hspi.Pages
             }
 
             return result;
+        }
+
+        public bool HandleEvent(IPlugInAPI.strTrigActInfo actionInfo, TwilioServiceFacade twilioService)
+        {
+            return false;
         }
     }
 }

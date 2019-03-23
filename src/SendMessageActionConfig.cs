@@ -2,6 +2,7 @@
 
 namespace Hspi
 {
+    using Hspi.Utils;
     using Hspi.Exceptions;
     using System.Text;
 
@@ -15,7 +16,14 @@ namespace Hspi
 
         public string Message { get; set; }
 
-		public static byte[] SerializeActionConfig(SendMessageActionConfig cfg)
+        public bool IsValid()
+        {
+            bool toValid = !this.ToNumber.IsNullOrWhiteSpace();
+            bool messageValid = !this.Message.IsNullOrWhiteSpace();
+            return toValid && messageValid;
+        }
+
+        public static byte[] SerializeActionConfig(SendMessageActionConfig cfg)
         {
 			if(cfg == null)
 			{

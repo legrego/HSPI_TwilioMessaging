@@ -11,53 +11,51 @@ using System.Threading.Tasks;
 
 namespace Hspi
 {
-	class TwilioServiceFacade
-	{
-		private Logger Log { get; set; }
-		private IHSApplication HS { get; set; }
+    internal class TwilioServiceFacade
+    {
+        private Logger Log { get; set; }
+        private IHSApplication HS { get; set; }
 
-		public TwilioServiceFacade(IHSApplication HS, bool enableDebug = true)
-		{
-			this.HS = HS;
-			this.Log = new Logger(TwilioMessagingData.PlugInName, HS, enableDebug);
-		}
+        public TwilioServiceFacade(IHSApplication HS, bool enableDebug = true)
+        {
+            this.HS = HS;
+            this.Log = new Logger(TwilioMessagingData.PlugInName, HS, enableDebug);
+        }
 
-		public void SendMessageToTwilio(PluginConfig pluginConfig, SendMessageActionConfig messageConfig)
-		{
-			this.Log.LogDebug("Starting SendMessageToTwilio");
+        public void SendMessageToTwilio(PluginConfig pluginConfig, SendMessageActionConfig messageConfig)
+        {
+            this.Log.LogDebug("Starting SendMessageToTwilio");
 
-			PhoneNumber to;
-			PhoneNumber from = new PhoneNumber(pluginConfig.FromNumber);
-			string message = messageConfig.Message;
+            PhoneNumber to;
+            PhoneNumber from = new PhoneNumber(pluginConfig.FromNumber);
+            string message = messageConfig.Message;
 
-			if(message == null || message.Length == 0)
-			{
-				this.Log.LogWarning("No message configured! Message won't send");
-				return;
-			}
-			if(messageConfig.ToNumber == null || messageConfig.ToNumber.Length == 0)
-			{
-				this.Log.LogWarning("No 'To' number configured! Message won't send");
-				return;
-			}
-			else
-			{
-				to = new PhoneNumber(HS.ReplaceVariables(messageConfig.ToNumber));
-			}
+            if (string.IsNullOrEmpty(message))
+            {
+                this.Log.LogWarning("No message configured! Message won't send");
+                return;
+            }
+            if (string.IsNullOrEmpty(messageConfig.ToNumber))
+            {
+                this.Log.LogWarning("No 'To' number configured! Message won't send");
+                return;
+            }
 
-			message = HS.ReplaceVariables(message);
+            to = new PhoneNumber(HS.ReplaceVariables(messageConfig.ToNumber));
+
+            message = HS.ReplaceVariables(message);
 
 
-			TwilioClient.Init(pluginConfig.AccountSID, pluginConfig.AuthToken);
+            TwilioClient.Init(pluginConfig.AccountSID, pluginConfig.AuthToken);
 
-			var publishedMessage = MessageResource.Create(
-				to: to,
-				from: from,
-				body: message
-			);
+            var publishedMessage = MessageResource.Create(
+                to,
+                from: from,
+                body: message
+            );
 
-			this.Log.LogInfo("Published message with Sid: " + publishedMessage.Sid);
-		}
+            this.Log.LogInfo("Published message with Sid: " + publishedMessage.Sid);
+        }
 
         public List<MessageResource> GetMessagesFromTwilio(PluginConfig pluginConfig, int secondsAgo)
         {
@@ -71,15 +69,12 @@ namespace Hspi
             };
 
             ResourceSet<MessageResource> messages = MessageResource.Read(options);
-            if (this.Log.EnableDebug)
+            foreach (MessageResource message in messages)
             {
-                foreach (MessageResource message in messages)
-                {
-                    string from = message.From.ToString();
-                    string body = message.Body;
-                    string created = message.DateCreated.GetValueOrDefault(DateTime.MinValue).ToLongDateString();
-                    this.Log.LogDebug(string.Format("From: {0}, created: {1}, body: {2}", from, created, body));
-                }
+                string from = message.From.ToString();
+                string body = message.Body;
+                string created = message.DateCreated.GetValueOrDefault(DateTime.MinValue).ToLongDateString();
+                this.Log.LogDebug(string.Format("From: {0}, created: {1}, body: {2}", from, created, body));
             }
 
             return messages.Where((message) => message.DateCreated.GetValueOrDefault(DateTime.MinValue).CompareTo(options.DateSentAfter) >= 0).ToList();
