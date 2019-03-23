@@ -119,8 +119,6 @@
     </Compile>
     <Compile Include="src\Logger.cs" />
     <Compile Include="src\Pages\ConfigPage.cs" />
-    <Compile Include="src\EnumHelper.cs" />
-    <Compile Include="src\ExceptionHelper.cs" />
     <Compile Include="src\HSPI\HSPI.cs" />
     <Compile Include="src\HSPI\HSTraceListener.cs" />
     <Compile Include="src\SendMessageActionConfig.cs" />
@@ -131,7 +129,6 @@
     <Compile Include="src\Exceptions\HspiException.cs" />
     <Compile Include="src\TwilioMessagingPlugin.cs" />
     <Compile Include="src\HSPI\HSPIBase.cs" />
-    <Compile Include="src\IPlugInAPI2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\TwilioServiceFacade.cs" />
     <Compile Include="src\ReceiveMessageTriggerConfig.cs" />
@@ -139,6 +136,8 @@
     <Compile Include="src\Pages\TriggerPage.cs" />
     <Compile Include="src\Utils\Extensions.cs" />
     <Compile Include="src\Utils\TaskHelper.cs" />
+    <Compile Include="src\HSPI\IPlugInAPI2.cs" />
+    <Compile Include="src\Exceptions\ExceptionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".travis.yml" />
