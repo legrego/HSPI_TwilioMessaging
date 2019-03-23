@@ -61,9 +61,9 @@ namespace Hspi.Pages
             return $"<textarea form_id=\'{NameToIdWithPrefix(name)}\' rows=\'{rows}\' cols=\'{cols}\' name=\'{name}\'  {(@readonly ? "readonly" : string.Empty)}>{HtmlEncode(defaultText)}</textarea>";
         }
 
-        protected string FormButton(string name, string label, string toolTip)
+        protected string FormButton(string name, string label, string toolTip, bool autoPostBack = true)
         {
-            var button = new clsJQuery.jqButton(name, label, PageName, true)
+            var button = new clsJQuery.jqButton(name, label, PageName, autoPostBack)
             {
                 id = NameToIdWithPrefix(name),
                 toolTip = toolTip,

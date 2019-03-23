@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Text;
 using System.Web;
 
-namespace Hspi
+namespace Hspi.Pages
 {
 
     /// <summary>
@@ -15,7 +15,7 @@ namespace Hspi
     /// </summary>
     /// <seealso cref="Scheduler.PageBuilderAndMenu.clsPageBuilder" />
     [NullGuard(ValidationFlags.Arguments | ValidationFlags.NonPublic)]
-    internal class ConfigPage : PageBuilderAndMenu.clsPageBuilder
+    internal class ConfigPage : PageHelper
     {
         protected const string IdPrefix = "id_";
 
@@ -24,10 +24,8 @@ namespace Hspi
         /// </summary>
         /// <param name="HS">The hs.</param>
         /// <param name="pluginConfig">The plugin configuration.</param>
-        public ConfigPage(IHSApplication HS, PluginConfig pluginConfig) : base(pageName)
+        public ConfigPage(IHSApplication HS, PluginConfig pluginConfig) : base(HS, pluginConfig, pageName)
         {
-            this.HS = HS;
-            this.pluginConfig = pluginConfig;
         }
 
         /// <summary>
@@ -188,22 +186,29 @@ namespace Hspi
             StringBuilder stb = new StringBuilder();
             stb.Append(PageBuilderAndMenu.clsPageBuilder.FormStart("ftmSettings", "IdSettings", "Post"));
 
-            stb.Append(@"<br>");
             stb.Append(@"<div>");
             stb.Append(@"<table class='full_width_table'");
+            stb.Append(@"<tr><td colspan=2><div>Register an account at <a href='http://twilio.com' title='Twilio' target='_blank'>Twilio</a> to get started</div></td></tr>");
             stb.Append("<tr height='5'><td style='width:25%'></td><td style='width:75%'></td></tr>");
             stb.Append($"<tr><td class='tablecell'>Account SID:</td><td class='tablecell' style='width: 100px'>{HtmlTextBox(AccountSIDId, pluginConfig.AccountSID, 40)}</td></tr>");
             stb.Append($"<tr><td class='tablecell'>Auth Token:</td><td class='tablecell' style='width: 100px'>{HtmlTextBox(AuthTokenId, pluginConfig.AuthToken, 40)}</td></tr>");
             stb.Append($"<tr><td class='tablecell'>From Number:</td><td class='tablecell' style='width: 100px'>{HtmlTextBox(FromNumberId, pluginConfig.FromNumber, 40)}</td></tr>");
             stb.Append($"<tr><td class='tablecell'>Debug Logging Enabled:</td><td colspan=2 class='tablecell'>{FormCheckBox(DebugLoggingId, string.Empty, this.pluginConfig.DebugLogging)}</ td ></ tr > ");
             stb.Append($"<tr><td colspan=2><div id='{ErrorDivId}' style='color:Red'></div></td><td></td></tr>");
-			stb.Append($"<tr><td colspan=2><div id='{SuccessDivId}' style='color:dodgerblue'></div></td><td></td></tr>");
-			stb.Append($"<tr><td colspan=2>{FormButton("Send test message", TestButtonName, "Send a test message", false)} {FormButton("Save", SaveButtonName, "Save Settings")}</td></tr>");
+            stb.Append($"<tr><td colspan=2><div id='{SuccessDivId}' style='color:dodgerblue'></div></td><td></td></tr>");
+            stb.Append($"<tr><td colspan=2>{FormButton("Send test message", TestButtonName, "Send a test message", false)} {FormButton("Save", SaveButtonName, "Save Settings")}</td></tr>");
             stb.Append("<tr height='5'><td colspan=2></td></tr>");
-            stb.Append($"<tr><td colspan=2></td></tr>");
-            stb.Append(@"<tr><td colspan=2><div>Register an account at <a href='http://twilio.com' title='Twilio' target='_blank'>Twilio</a> to get started</div></td></tr>");
-            stb.Append(@"<tr height='5'><td colspan=2></td></tr>");
-            stb.Append(@" </table>");
+            stb.Append(@"</table>");
+            stb.Append(@"<div class='gh-section'>");
+            stb.Append(@"<p>");
+            stb.Append(@"An open-source project by <a href='https://legrego.dev' target='_blank'>Larry Gregory</a> and contibutors.");
+            stb.Append(@"</p>");
+            stb.Append(@"<p style='height:20px; line-height:20px; font-size:20px'>");
+            stb.Append(@"<a href='https://github.com/legrego/HSPI_TwilioMessaging' target='_blank'><img height='20px' src='https://img.shields.io/github/stars/legrego/HSPI_TwilioMessaging.svg?style=social&label=Star&maxAge=2592000' /></a>");
+            stb.Append(@"<a style='vertical-align: top; margin-left: 10px;' href='https://github.com/legrego/HSPI_TwilioMessaging' target='_blank'>View and contribute to this plugin's code on GitHub</a>");
+            stb.Append(@"</p>");
+            stb.Append(@"</div>");
+
             stb.Append(@"</div>");
             stb.Append(PageBuilderAndMenu.clsPageBuilder.FormEnd());
 
@@ -213,57 +218,46 @@ namespace Hspi
             return stb.ToString();
         }
 
-        private static string NameToId(string name)
+        private string BuildAboutTab()
         {
-            return name.Replace(' ', '_');
-        }
+            StringBuilder stb = new StringBuilder();
+            stb.Append(PageBuilderAndMenu.clsPageBuilder.FormStart("ftmSettings", "IdSettings", "Post"));
 
-        private static string NameToIdWithPrefix(string name)
-        {
-            return $"{ IdPrefix}{NameToId(name)}";
-        }
+            stb.Append(@"<br>");
+            stb.Append(@"<div>");
+            stb.Append(@"<table class='full_width_table'");
+            stb.Append("<tr height='5'><td style='width:25%'></td><td style='width:75%'></td></tr>");
+            stb.Append($"<tr><td class='tablecell'>Account SID:</td><td class='tablecell' style='width: 100px'>{HtmlTextBox(AccountSIDId, pluginConfig.AccountSID, 40)}</td></tr>");
+            stb.Append($"<tr><td class='tablecell'>Auth Token:</td><td class='tablecell' style='width: 100px'>{HtmlTextBox(AuthTokenId, pluginConfig.AuthToken, 40)}</td></tr>");
+            stb.Append($"<tr><td class='tablecell'>From Number:</td><td class='tablecell' style='width: 100px'>{HtmlTextBox(FromNumberId, pluginConfig.FromNumber, 40)}</td></tr>");
+            stb.Append($"<tr><td class='tablecell'>Debug Logging Enabled:</td><td colspan=2 class='tablecell'>{FormCheckBox(DebugLoggingId, string.Empty, this.pluginConfig.DebugLogging)}</ td ></ tr > ");
+            stb.Append($"<tr><td colspan=2><div id='{ErrorDivId}' style='color:Red'></div></td><td></td></tr>");
+            stb.Append($"<tr><td colspan=2><div id='{SuccessDivId}' style='color:dodgerblue'></div></td><td></td></tr>");
+            stb.Append($"<tr><td colspan=2>{FormButton("Send test message", TestButtonName, "Send a test message", false)} {FormButton("Save", SaveButtonName, "Save Settings")}</td></tr>");
+            stb.Append("<tr height='5'><td colspan=2></td></tr>");
+            stb.Append($"<tr><td colspan=2></td></tr>");
+            stb.Append(@"<tr><td colspan=2><div>Register an account at <a href='http://twilio.com' title='Twilio' target='_blank'>Twilio</a> to get started</div></td></tr>");
+            stb.Append(@"<tr><td><a href='https://github.com/legrego/HSPI_TwilioMessaging'><img src='https://img.shields.io/github/stars/legrego/HSPI_TwilioMessaging.svg?style=social&label=Star&maxAge=2592000' /></a></td></tr>");
 
-        protected static string HtmlTextBox(string name, string defaultText, int size = 25)
-        {
-            return $"<input type=\'text\' id=\'{NameToIdWithPrefix(name)}\' size=\'{size}\' name=\'{name}\' value=\'{defaultText}\'>";
-        }
+            stb.Append(@"<tr height='5'><td colspan=2></td></tr>");
+            stb.Append(@" </table>");
+            stb.Append(@"</div>");
+            stb.Append(PageBuilderAndMenu.clsPageBuilder.FormEnd());
 
-        protected string FormCheckBox(string name, string label, bool @checked)
-        {
-            var checkbox = new clsJQuery.jqCheckBox(name, label, PageName, true, true)
-            {
-                id = NameToIdWithPrefix(name),
-                @checked = @checked,
-            };
-            return checkbox.Build();
-        }
+            stb.Append(Properties.Resources.SendTestDialogFile);
+            stb.Append(Properties.Resources.ConfigPageScript);
 
-        protected string FormButton(string name, string label, string toolTip, bool submit = true)
-        {
-            var button = new clsJQuery.jqButton(name, label, PageName, submit)
-            {
-                id = NameToIdWithPrefix(name),
-                toolTip = toolTip,
-            };
-            button.toolTip = toolTip;
-            button.enabled = true;
-
-            return button.Build();
+            return stb.ToString();
         }
 
         private const string SaveButtonName = "Save";
 		private const string TestButtonName = "Test";
-        private const string CallsPerDayId = "CallsPerDayId";
         private const string DebugLoggingId = "DebugLoggingId";
-        private const string UnitId = "UnitId";
         private const string AccountSIDId = "AccountSIDId";
         private const string AuthTokenId = "AuthTokenId";
         private const string FromNumberId = "FromNumberId";
         private const string ErrorDivId = "message_id";
         private const string SuccessDivId = "success_message_id";
-        private const string RefreshIntervalId = "RefreshIntervalId";
         private static readonly string pageName = $"{TwilioMessagingData.PlugInName} Configuration".Replace(' ', '_');
-        private readonly IHSApplication HS;
-        private readonly PluginConfig pluginConfig;
     }
 }

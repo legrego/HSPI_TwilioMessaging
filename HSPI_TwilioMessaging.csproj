@@ -173,7 +173,6 @@
     <Content Include="updater_override.txt" />
     <None Include="Resources\SendTestDialogFile.txt" />
     <None Include="Resources\ConfigPageScript.txt" />
-    <Content Include="src\Pages\SendTestDialog.html" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
