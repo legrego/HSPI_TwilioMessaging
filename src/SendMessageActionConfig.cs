@@ -2,6 +2,7 @@
 
 namespace Hspi
 {
+    using Hspi.Utils;
     using Hspi.Exceptions;
     using System.Text;
 
@@ -15,72 +16,72 @@ namespace Hspi
 
         public string Message { get; set; }
 
-		public static byte[] SerializeActionConfig(SendMessageActionConfig cfg)
+        public bool IsValid()
+        {
+            bool toValid = !this.ToNumber.IsNullOrWhiteSpace();
+            bool messageValid = !this.Message.IsNullOrWhiteSpace();
+            return toValid && messageValid;
+        }
+
+        public static byte[] SerializeActionConfig(SendMessageActionConfig cfg)
         {
 			if(cfg == null)
 			{
 				throw new HspiException("configuration parameter is required");
 			}
 
-            string toNumber = cfg.ToNumber;
-            string message = cfg.Message;
+            string jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(cfg);
 
-            byte[] buffer;
-
-            MemoryStream ms = null;
-            BinaryWriter bw = null;
-            try
-            {
-                ms = new MemoryStream();
-                bw = new BinaryWriter(ms, Encoding.UTF8);
-                bw.Write(toNumber);
-                bw.Write(message);
-
-                buffer = ms.ToArray();
-            }
-            finally
-            {
-				if(bw != null)
-				{
-					bw.Dispose();
-				}
-				if (ms != null)
-                {
-                    ms.Dispose();
-                }
-            }
-            
-            return buffer;
+            return Encoding.Unicode.GetBytes(jsonString);
         }
 
         public static SendMessageActionConfig DeserializeActionConfig(byte[] configuration)
         {
-            var srx2 = new SendMessageActionConfig();
+            var configInstance = new SendMessageActionConfig();
             if (configuration == null || configuration.Length == 0)
             {
-                srx2.ToNumber = "";
-                srx2.Message = "";
+                configInstance.ToNumber = "";
+                configInstance.Message = "";
             } else
             {
                 try
                 {
-                    using (var ms = new MemoryStream(configuration))
-                    {
-                        using (var br = new BinaryReader(ms, Encoding.UTF8))
-                        {
-                            srx2.ToNumber = br.ReadString();
-                            srx2.Message = br.ReadString();
-                        }
-                    }
+                    string jsonString = Encoding.Unicode.GetString(configuration);
+                    configInstance = Newtonsoft.Json.JsonConvert.DeserializeObject<SendMessageActionConfig>(jsonString);
                 }
                 catch
                 {
-                    srx2.ToNumber = "";
-                    srx2.Message = "Error reading config";
+                    configInstance = DeserializeLegacyActionConfig(configuration);
                 }
+
             }
 
-            return srx2;
+            return configInstance;
         }
+
+        private static SendMessageActionConfig DeserializeLegacyActionConfig(byte[] configuration)
+        {
+            var configInstance = new SendMessageActionConfig();
+
+            try
+            {
+                using (var ms = new MemoryStream(configuration))
+                {
+                    using (var br = new BinaryReader(ms, Encoding.UTF8))
+                    {
+                        configInstance.ToNumber = br.ReadString();
+                        configInstance.Message = br.ReadString();
+                    }
+                }
+            }
+            catch
+            {
+                configInstance.ToNumber = "";
+                configInstance.Message = "Error reading config";
+            }
+
+            return configInstance;
+        }
+
     };
 }
