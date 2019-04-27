@@ -30,7 +30,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <ReleaseVersion>0.2</ReleaseVersion>
+    <ReleaseVersion>0.2.1</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -154,6 +154,9 @@
     <None Include="src\packages.config" />
     <None Include="Resources\ReceiveMessageTriggerScript.txt" />
     <None Include="create_installer.sh" />
+    <None Include="HSPI_TwilioMessaging.csproj" />
+    <None Include="HSPI_TwilioMessaging.csproj.user" />
+    <None Include="HSPI_TwilioMessaging.sln" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
