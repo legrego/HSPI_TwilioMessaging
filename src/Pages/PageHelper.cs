@@ -12,10 +12,11 @@ namespace Hspi.Pages
     [NullGuard(ValidationFlags.Arguments | ValidationFlags.NonPublic)]
     internal abstract class PageHelper : PageBuilderAndMenu.clsPageBuilder
     {
-        protected PageHelper(IHSApplication HS, PluginConfig pluginConfig, string pageName) : base(pageName)
+        protected PageHelper(IHSApplication HS, PluginConfig pluginConfig, string pageName, Logger logger) : base(pageName)
         {
             this.HS = HS;
             this.pluginConfig = pluginConfig;
+            this.logger = logger;
         }
 
         public static string HtmlEncode<T>([AllowNull]T value) => value == null ? string.Empty : HttpUtility.HtmlEncode(value);
@@ -154,6 +155,7 @@ namespace Hspi.Pages
         protected const string RecordId = "recordid";
         protected readonly IHSApplication HS;
         protected readonly PluginConfig pluginConfig;
+        protected readonly Logger logger;
         private const string IdPrefix = "id_";
     }
 }

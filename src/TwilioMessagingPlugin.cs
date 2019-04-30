@@ -30,7 +30,7 @@ namespace Hspi
             try
             {
                 pluginConfig = new PluginConfig(HS);
-                configPage = new ConfigPage(HS, pluginConfig);
+                configPage = new ConfigPage(HS, pluginConfig, base.Log);
                 LogInfo("Starting Plugin");
 #if DEBUG
                 pluginConfig.DebugLogging = true;

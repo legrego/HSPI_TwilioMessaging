@@ -30,7 +30,7 @@ namespace Hspi
 
         public override string get_TriggerName(int triggerNumber)
         {
-            using (var page = new TriggerPage(HS, this.pluginConfig))
+            using (var page = new TriggerPage(HS, this.pluginConfig, base.Log))
             {
                 return page.Name();
             }
@@ -81,7 +81,7 @@ namespace Hspi
             switch (actionNumber)
             {
                 case ActionSendMessageTANumber:
-                    using (var page = new ActionPage(HS, pluginConfig))
+                    using (var page = new ActionPage(HS, pluginConfig, base.Log))
                     {
                         return page.Name();
                     }
@@ -160,7 +160,7 @@ namespace Hspi
             }
             catch (Exception ex)
             {
-                LogError(string.Format("Error performing trigger refresh: {0}", ex.GetFullMessage()));
+                LogError(string.Format("Error performing trigger refresh: {0} || {1}", ex.GetFullMessage(), ex));
             }
             finally
             {
@@ -194,11 +194,12 @@ namespace Hspi
                 var config = ReceiveMessageTriggerConfig.DeserializeTriggerConfig(strTrigActInfo.DataIn);
                 if (config.IsValid())
                 {
+                    string normalizedConfigFrom = NormalizePhoneNumber(config.FromNumber);
                     string messageToLower = config.Message.ToLower();
                     bool shouldFire = messages.Exists((MessageResource obj) =>
                     {
                         bool bodyMatches = obj.Body.ToLower().Contains(messageToLower);
-                        bool fromMatches = config.FromNumber.IsNullOrWhiteSpace() || config.FromNumber == obj.From.ToString();
+                        bool fromMatches = normalizedConfigFrom.IsNullOrWhiteSpace() || normalizedConfigFrom == NormalizePhoneNumber(obj.From.ToString());
                         return fromMatches && bodyMatches;
                     });
 
@@ -214,6 +215,13 @@ namespace Hspi
                 }
             }
         }
+
+        private string NormalizePhoneNumber([AllowNull]string phoneNumber)
+        {
+            return phoneNumber == null
+                ? string.Empty 
+                : phoneNumber.Replace("+", string.Empty).Replace(" ", string.Empty);
+        }
         #endregion
 
         private IEventPage GetActionPage(IPlugInAPI.strTrigActInfo actionInfo)
@@ -221,7 +229,7 @@ namespace Hspi
             switch (actionInfo.TANumber)
             {
                 case ActionSendMessageTANumber:
-                    return new ActionPage(HS, pluginConfig);
+                    return new ActionPage(HS, pluginConfig, base.Log);
                 default:
                     return new NoOpPage();
             }
@@ -232,7 +240,7 @@ namespace Hspi
             switch(actionInfo.TANumber)
             {
                 case TriggerReceiveMessageTANumber:
-                    return new TriggerPage(HS, pluginConfig);
+                    return new TriggerPage(HS, pluginConfig, base.Log);
                 default:
                     return new NoOpPage();
             }
