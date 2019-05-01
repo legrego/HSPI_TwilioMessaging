@@ -13,6 +13,8 @@ namespace Hspi
 
     public class ReceiveMessageTriggerConfig
     {
+        public bool FromAnyNumber { get; set; }
+
         public string FromNumber { get; set; }
 
         public string FromDisplay { 

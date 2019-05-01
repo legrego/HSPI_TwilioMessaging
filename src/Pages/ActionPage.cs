@@ -10,7 +10,7 @@ namespace Hspi.Pages
 {
     internal class ActionPage : PageHelper, IEventPage
     {
-        public ActionPage(IHSApplication HS, PluginConfig pluginConfig) : base(HS, pluginConfig, "Events")
+        public ActionPage(IHSApplication HS, PluginConfig pluginConfig, Logger logger) : base(HS, pluginConfig, "Events", logger)
         {
         }
 

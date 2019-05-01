@@ -24,7 +24,7 @@ namespace Hspi.Pages
         /// </summary>
         /// <param name="HS">The hs.</param>
         /// <param name="pluginConfig">The plugin configuration.</param>
-        public ConfigPage(IHSApplication HS, PluginConfig pluginConfig) : base(HS, pluginConfig, pageName)
+        public ConfigPage(IHSApplication HS, PluginConfig pluginConfig, Logger logger) : base(HS, pluginConfig, pageName, logger)
         {
         }
 

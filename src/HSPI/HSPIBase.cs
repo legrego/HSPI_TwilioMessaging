@@ -304,6 +304,7 @@ namespace Hspi
         }
 
         protected CancellationToken ShutdownCancellationToken => cancellationTokenSource.Token;
+        protected Logger Log;
 
         private readonly int accessLevel;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -318,6 +319,6 @@ namespace Hspi
         private readonly bool supportsMultipleInstancesSingleEXE;
         private bool disposedValue;
         private HSTraceListener hsTraceListener;
-		private Logger Log;
+		
     }
 }

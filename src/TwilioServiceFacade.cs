@@ -28,6 +28,7 @@ namespace Hspi
 
             PhoneNumber to;
             PhoneNumber from = new PhoneNumber(pluginConfig.FromNumber);
+
             string message = messageConfig.Message;
 
             if (string.IsNullOrEmpty(message))

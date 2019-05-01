@@ -2,10 +2,3 @@
 solution: HSPI_TwilioMessaging.sln
 mono:
     - latest
-deploy:
-  provider: releases
-  api_key: "$GH_TOKEN"
-  file: "HSPI_TwilioMessaging.exe"
-  skip_cleanup: true
-  on:
-    tags: true
