@@ -6,8 +6,7 @@ using Twilio.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace Hspi
 {
@@ -46,7 +45,7 @@ namespace Hspi
 
             message = HS.ReplaceVariables(message);
 
-
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             TwilioClient.Init(pluginConfig.AccountSID, pluginConfig.AuthToken);
 
             var publishedMessage = MessageResource.Create(
@@ -61,6 +60,7 @@ namespace Hspi
         public List<MessageResource> GetMessagesFromTwilio(PluginConfig pluginConfig, int secondsAgo)
         {
             this.Log.LogDebug("Starting GetMessagesFromTwilio");
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             TwilioClient.Init(pluginConfig.AccountSID, pluginConfig.AuthToken);
 
             ReadMessageOptions options = new ReadMessageOptions

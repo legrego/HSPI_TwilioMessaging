@@ -27,4 +27,4 @@ homeseer.com,anonymous,user@updates,updates3,,,0.0.0.0
 
 %<HS TYPE=SUBCAT>Test Plugin
 ' -------------------------------------------------------------
-Twilio Messaging,		HSPI_TwilioMessaging.exe,			,0.2.0,	 63, 1, local,,	HSPI_TwilioMessaging.zip,		4,	Free,						Larry Gregory,			,	,		,,
+Twilio Messaging,		HSPI_TwilioMessaging.exe,			,0.2.3,	 63, 1, local,,	HSPI_TwilioMessaging.zip,		4,	Free,						Larry Gregory,			,	,		,,
